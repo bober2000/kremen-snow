@@ -1,0 +1,17 @@
+{
+  "author": "Jaroslav Khorishchenko <websnipter@gmail.com>",
+  "description": "Snow removing api",
+  "license": "MIT",
+  "main": "index.js",
+  "name": "snow-removing",
+  "private": false,
+  "scripts": {
+    "start": "node index"
+  },
+  "version": "0.0.0",
+  "dependencies": {
+    "express": "^4.16.2",
+    "md5": "^2.2.1",
+    "request": "^2.83.0"
+  }
+}

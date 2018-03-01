@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+
+  snow-removing:
+    image: node:alpine
+    container_name: 'snow-removing'
+    hostname: 'snow-removing'
+    working_dir: /usr/src/app
+    volumes:
+      - ./services/snow-removing:/usr/src/app
+    ports:
+      - 3400:8080
+    command: yarn start
