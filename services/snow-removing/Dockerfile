@@ -7,7 +7,13 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package.json /usr/src/app/
 COPY yarn.lock /usr/src/app/
-RUN yarn install --production
+RUN apk add --no-cache --virtual .build-deps \
+  python \
+  alpine-sdk \
+  && \
+  yarn install --production \
+  && \
+  apk del .build-deps
 
 # Bundle app source
 COPY index.js /usr/src/app

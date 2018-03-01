@@ -9,6 +9,5 @@ services:
     working_dir: /usr/src/app
     volumes:
       - ./services/snow-removing:/usr/src/app
-    ports:
-      - 3400:8080
+      - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
     command: yarn start

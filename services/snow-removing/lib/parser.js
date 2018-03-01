@@ -103,7 +103,6 @@ const parseMachineryData = (dataStr) => {
     const key = match[1].trim().toLocaleLowerCase();
     const val = match[2].trim();
     if(key === 'авто'){
-      data.id = md5(val);
       data.name = val;
     }else if(key === 'компанія'){
       data.company = val;
@@ -120,14 +119,34 @@ const parseMachineryData = (dataStr) => {
   return data;
 }
 
+const marchineryDataToId = (data) => {
+  if(!data || !data.name) return null;
+  return md5(data.name);
+}
+
+const isItemsDifferen = (a, b) => {
+  if(!a || !b) return true;
+  if((a.name !== b.name) || 
+     (a.company !== b.company) || 
+     (a.group !== b.group) || 
+     (a.speed !== b.speed) || 
+     (a.lat !== b.lat) || 
+     (a.lng !== b.lng)){
+    return true;
+  }else{
+    return false;
+  }
+}
+
 // SnowRemovingParser
 class SnowRemovingParser{
   constructor(){
-    this.machineries = [];
+    this.machineries = {};
+    this.handlers = [];
   }
 
   async start(){
-    this.machineries = [];
+    this.machineries = {};
     this.jar = request.jar();
     const { jar } = this;
     log('starting');
@@ -189,21 +208,22 @@ class SnowRemovingParser{
     const cmds = contentWidnowCmdsFromBody(body);
     const nowTs = Date.now();
     if(!cmds.length) return;
-    let machineries = [...this.machineries];
+    let machineries = {...this.machineries};
     cmds.forEach(({name, params}) => {
       if(name === 'clear_source'){
-        machineries = [];
+        machineries = {};
       }else if(name === 'clear_array'){
-        machineries = [];
+        machineries = {};
       }else if(name === 'addDots'){
-        const data = parseMachineryData(params[2]);
-        if(!data){
-          log.err(`parsing machinery data error, ${name}: ${JSON.stringify(params)}`);
+        const info = parseMachineryData(params[2]);
+        if(!info){
+          log.err(`parsing machinery info error, ${name}: ${JSON.stringify(params)}`);
         }else{
           const lat = Number.parseFloat(params[0]);
           const lng = Number.parseFloat(params[1]);
           const icon = relativeToAbsoluteUrl(clearStringParam(params[3]));
-          machineries.push({...data, lat, lng, icon, modified: nowTs});
+          const id = marchineryDataToId(info);
+          machineries[id] = { ...info,  lat, lng, icon};
         }
       }else if(name === 'addLines'){
 
@@ -215,13 +235,40 @@ class SnowRemovingParser{
         log(`unprocessed command, ${name}: ${JSON.stringify(params)}`);
       }
     });
-    if(machineries.length){
+    if(Object.keys(machineries).length){
       this.setMachineries(machineries);
     }
   }
 
-  setMachineries(items){
-    log(`setting new machineries, lenght: ${items.length}`);
+  setMachineries(newItems){
+    const modified = Date.now();
+    log(`setting new machineries, lenght: ${Object.keys(newItems).length}`);
+    Object.keys(newItems).forEach(id => {
+      const newItem = newItems[id] ;
+      const oldItem = this.machineries[id];
+      if(!oldItem){
+        this.machineries[id] = {...newItem, modified};
+        this.emit('changed', {id, data: this.machineries[id]});
+      }else if(isItemsDifferen(newItem, oldItem)){
+        this.machineries[id] = {...newItem, modified};
+        this.emit('changed', {id, data: this.machineries[id]});
+      }
+    });
+    this.emit('updated', newItems);
+  }
+
+  // Emit
+
+  on(name, cb){
+    this.handlers.push({name, cb});
+  }
+
+  emit(name, data){
+    this.handlers.forEach(handler => {
+      if(handler.name === name){
+        handler.cb(data);
+      }
+    })
   }
 
 }

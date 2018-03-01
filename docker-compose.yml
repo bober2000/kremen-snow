@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  snow-removing:
+    image: registry.smartapp.com.ua/iq-hub/snow-removing:latest
+    container_name: 'snow-removing'
+    hostname: 'snow-removing'
+    volumes:
+      - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
+

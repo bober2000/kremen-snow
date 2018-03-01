@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+
+  snow-removing:
+    image: registry.smartapp.com.ua/iq-hub/snow-removing:latest
+    build: ./services/snow-removing
