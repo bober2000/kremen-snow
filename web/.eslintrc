@@ -1,0 +1,23 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "import/newline-after-import": "off",
+    "no-alert": "off",
+    "import/first": "off",
+    "no-use-before-define": "off"
+  },
+  "settings": {
+   "import/resolver": {
+    "node": {
+     "paths": [
+      "./src",
+      "./src/app"
+     ]
+    }
+   }
+  }
+}

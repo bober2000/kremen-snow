@@ -1,0 +1,66 @@
+@import
+  "../assets/scss/screens",
+  "../assets/scss/colors",
+  "../assets/scss/mixings"
+;
+
+/* Base */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
+
+html,
+body{
+  font-family: Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+a{
+  transition: opacity .3s ease-in-out;
+  &:link, 
+  &:active,
+  &:visited{
+    color: black;
+    text-decoration: none;
+    border-bottom: 1px dashed black;
+  }
+  &:hover{
+    opacity: .7;
+  }
+}
+
+/* Global styles */
+
+.g-img-100{
+  img{
+    width: 100%;
+  }
+}
+
+/* Clear fix */
+
+.cf:before,
+.cf:after {
+  content: " "; /* 1 */
+  display: table; /* 2 */
+}
+
+.cf:after {
+  clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+  *zoom: 1;
+}

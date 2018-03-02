@@ -1,0 +1,24 @@
+{
+ "compilerOptions": {
+   "baseUrl": ".",
+   "paths": {
+     "components/*": ["./src/app/components/*"],
+     "consts/*": ["./src/app/consts/*"],
+     "navigation/*": ["./src/app/navigation/*"],
+     "pages/*": ["./src/app/pages/*"],
+     "store/*": ["./src/app/store/*"],
+     "styles/*": ["./src/app/styles/*"],
+     "services/*": ["./src/app/services/*"],
+     "utils/*": ["./src/app/utils/*"],
+     "views/*": ["./src/app/views/*"],
+     "assets/*": ["./src/assets/*"]
+   }
+ },
+ "exclude": [
+   "node_modules"
+ ],
+ "include": [
+   "node_modules/lodash",
+   "node_modules/moment"
+ ]
+}
