@@ -9,3 +9,8 @@ services:
     volumes:
       - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
 
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - './data/mongo:/data/db'
