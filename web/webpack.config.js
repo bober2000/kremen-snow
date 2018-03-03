@@ -55,8 +55,7 @@ module.exports = (env) => ({
       }
     }),
     new CopyWebpackPlugin([
-      {context: 'src', from: 'assets/img/fav/*'},
-      {context: 'src', from: 'assets/img/banner/*'}
+      {context: 'src', from: 'assets/img/*.{png,jpg}'},
     ]),
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(package.version),

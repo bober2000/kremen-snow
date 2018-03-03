@@ -3,9 +3,9 @@ import React from 'react';
 // Components
 import { withScriptjs, withGoogleMap, GoogleMap } from 'react-google-maps';
 
-const Map = (props) => {
+const Map = ({mapRef, ...props}) => {
   return (
-    <GoogleMap {...props}/>
+    <GoogleMap ref={mapRef}  {...props}/>
   )
 }
 

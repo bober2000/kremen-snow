@@ -4,8 +4,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Styles
-import Radium from 'radium';
-
+import { mstyle as m } from 'styles';
 // Assets
 import iqHubLogo from './iqhub.png';
 
@@ -36,11 +35,11 @@ class Brands extends Component {
     } = this.props;
     // Data
     const items = [
-      {icon: iqHubLogo, title: "IQ Hub", link: "https://io.kr.ua/"},
+      { icon: iqHubLogo, title: "IQ Hub", link: "https://io.kr.ua/" },
     ];
     // Render
     return (
-      <div style={[styles.container, style]}>
+      <div style={m(styles.container, style)}>
         {_.map(items, ({icon, title, link}, index) => (
           <div 
             key={index}
@@ -91,4 +90,4 @@ const styles = {
 Brands.propTypes = propTypes;
 Brands.defaultProps = defaultProps;
 
-export default Radium(Brands);
+export default Brands;

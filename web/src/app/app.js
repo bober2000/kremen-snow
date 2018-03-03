@@ -2,6 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+// Services
+import configStorage from 'services/configStorage';
 // Pages
 import MapPage from './pages/Map';
 // Styles
@@ -9,15 +11,15 @@ import './app.scss';
 import '../../node_modules/font-awesome/css/font-awesome.css';
 import { mixings } from 'styles';
 // Log
-// const log = require('utils/log').withModule('app');
+const log = require('utils/log').default.withModule('app');
 
 // Init Log
-// const logEnabled = ConfigStorage.get('log') || ((typeof ENV !== 'undefined') && (ENV === 'dev'));
-// if (logEnabled) {
-//   log.enabled(true);
-// } else {
-//   log.enabled(false);
-// }
+const logEnabled = configStorage.get('log') || ((typeof ENV !== 'undefined') && (ENV === 'dev'));
+if (logEnabled) {
+  log.enabled(true);
+} else {
+  log.enabled(false);
+}
 
 // AppContainer
 const AppContainer = () => {

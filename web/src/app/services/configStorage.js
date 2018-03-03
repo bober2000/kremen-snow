@@ -1,15 +1,14 @@
 // Log
-import Log from 'utils/log';
-const log = Log.withModule('ConfigStorage');
+const log = require('utils/log').default.withModule('configStorage');
 
 // Config Storage
 const keyPrefix = 'kremen:';
 
-function getFullKey(key) {
+const getFullKey = (key) => {
   return keyPrefix + key;
 }
 
-function getConfig(key) {
+const get = (key) => {
   const fullKey = getFullKey(key);
   const valStr = localStorage.getItem(fullKey);
   if (valStr === undefined) return null;
@@ -23,7 +22,7 @@ function getConfig(key) {
   return val;
 }
 
-function setConfig(key, val) {
+const set = (key, val) => {
   const fullKey = getFullKey(key);
   const valStr = JSON.stringify(val);
   localStorage.setItem(fullKey, valStr);
@@ -34,12 +33,12 @@ function setConfig(key, val) {
 export const CONFIG_KEYS = {
   MAP_CENTER: 'mapCenter',
   MAP_ZOOM: 'mapZoom',
-  EDIT_MODE: 'editMode',
+  ITEMS: 'items',
 };
 
 // Export
 
 export default {
-  get: getConfig,
-  set: setConfig,
+  get,
+  set,
 };
