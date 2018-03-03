@@ -14,7 +14,7 @@ const WrappedMap = withScriptjs(withGoogleMap(Map));
 const WrappedMapWithDefault = ({style, ...props}) => {
   return (
     <WrappedMap 
-      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4fHuZhj5xqfXC-m10d7T2GgQLkdJQrZE"
+      googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAP4g1h94vC8DUOMFfPYOQLpTAvzqB0gOY"
       loadingElement={<div style={style} />}
       containerElement={<div style={style} />}
       mapElement={<div style={style} />}
