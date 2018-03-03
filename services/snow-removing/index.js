@@ -4,6 +4,9 @@ const SnowRemovingParser = require('./lib/parser');
 const mongo = require('./lib/db');
 // Consts
 const { name, version, description } = require('./package.json');
+const secMs = 1000;
+const minMs = secMs * 60;
+const hourMs = minMs * 60;
 const mongoDbName = 'snowRemoving';
 // Log
 const log = require('./lib/log').withModule('app');
@@ -16,11 +19,11 @@ log.info(description);
 const fireServiceAccount = require('./serviceAccountKey.json');
 firebase.initializeApp({
   credential: firebase.credential.cert(fireServiceAccount),
-  databaseURL: "https://kremen-city.firebaseio.com"
+  databaseURL: "https://kremen-snow.firebaseio.com"
 });
 const realtimeDb = firebase.database();
-const itemsRef = realtimeDb.ref('snowRemoving/items');
-const modifiedRef = realtimeDb.ref('snowRemoving/modified');
+const itemsRef = realtimeDb.ref('items/data');
+const itemsModRef = realtimeDb.ref('items/modified');
 
 const startProcessing = async () => {
   log('connecting to mongo');
@@ -38,7 +41,7 @@ const startProcessing = async () => {
     log('updating data at the firebase');
     const ts = Date.now();
     itemsRef.set(itemsData);
-    modifiedRef.set(ts);
+    itemsModRef.set(ts);
   });
   // Changed
   parser.on('changed', ({id, data}) => {

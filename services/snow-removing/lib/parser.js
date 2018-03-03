@@ -165,20 +165,33 @@ class SnowRemovingParser{
     }
   }
 
+  async restart(){
+    if(this.monitHandler){
+      clearTimeout(this.monitHandler);
+    }
+    return this.start();
+  }
+
   startMonitoringWithTimer({name, val}){
     log(`monitoring with sernder: ${name}`);
     if(this.monitHandler){
-      clearInterval(this.monitHandler);
+      clearTimeout(this.monitHandler);
     }
     this.monitHandler = setTimeout(async () => {
       log(`making tick req with sender: ${name}`);
       const tickBody = await this.makeTickReq(name);
       log(`making tick req done`);
-      this.processTickBody(tickBody);
+      if(tickBody){
+        this.processTickBody(tickBody);
+      }else{
+        log.err('tick body empty');
+      }
       const tickAddTimer = getAddTimerFromBody(tickBody);
       if(tickAddTimer && (tickAddTimer.name !== name)){
+        log(`new timer found: ${tickAddTimer.name}`);
         this.startMonitoringWithTimer(tickAddTimer);
       }else{
+        log('new timer not found');
         this.startMonitoringWithTimer({name, val});
       }
     }, val);
@@ -244,7 +257,7 @@ class SnowRemovingParser{
     const modified = Date.now();
     log(`setting new machineries, lenght: ${Object.keys(newItems).length}`);
     Object.keys(newItems).forEach(id => {
-      const newItem = newItems[id] ;
+      const newItem = newItems[id];
       const oldItem = this.machineries[id];
       if(!oldItem){
         this.machineries[id] = {...newItem, modified};
@@ -254,7 +267,7 @@ class SnowRemovingParser{
         this.emit('changed', {id, data: this.machineries[id]});
       }
     });
-    this.emit('updated', newItems);
+    this.emit('updated', this.machineries);
   }
 
   // Emit
