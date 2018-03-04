@@ -21,9 +21,8 @@ firebase.initializeApp({
   credential: firebase.credential.cert(fireServiceAccount),
   databaseURL: "https://kremen-snow.firebaseio.com"
 });
-const realtimeDb = firebase.database();
-const itemsRef = realtimeDb.ref('items/data');
-const itemsModRef = realtimeDb.ref('items/modified');
+const realdb = firebase.database();
+const itemsModRef = realdb.ref('items/modified');
 
 const startProcessing = async () => {
   log('connecting to mongo');
@@ -38,9 +37,8 @@ const startProcessing = async () => {
   const parser = new SnowRemovingParser();
   // Updated
   parser.on('updated', (itemsData) => {
-    log('updating data at the firebase');
     const ts = Date.now();
-    itemsRef.set(itemsData);
+    log('updating modTs at firebase');
     itemsModRef.set(ts);
   });
   // Changed
@@ -48,12 +46,20 @@ const startProcessing = async () => {
     const ts = Date.now();
     const { lat, lng } = data;
     log.info(`changed, ${id}: ${JSON.stringify(data)}`);
-    log('adding track record');
+    // Adding record to mongo
+    log(`${id}: adding track record`);
     const record = { mid: id, ts, lat, lng };
     mongo.saveAsync(trackings, record).then(() => {
-      log('adding track record done')
+      log(`${id}: adding track record done`);
     }).catch((err) => {
-      log.err(`adding track record err: ${err}`);
+      log.err(`${id}: adding track record err - ${err}`);
+    });
+    // Updating data at firebase
+    log(`${id}: updating realtime data`);
+    realdb.ref(`items/data/${id}`).set(data).then(() => {
+      log(`${id}: updating realtime data done`);
+    }).catch((err) => {
+      log(`${id}: updating realtime data err - ${err}`);
     });
   });
   // Start
