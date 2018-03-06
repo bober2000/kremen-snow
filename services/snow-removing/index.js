@@ -29,6 +29,7 @@ const startProcessing = async () => {
   const { db } = await mongo.connect(mongoDbName);
   log('connecting to mongo done');
   const trackings = db.collection('trackings');
+  const equipment = db.collection('equipment');
   log('ensuring indexes');
   await mongo.ensureIndexAsync(trackings, 'mid');
   await mongo.ensureIndexAsync(trackings, 'ts');
@@ -37,22 +38,28 @@ const startProcessing = async () => {
   const parser = new SnowRemovingParser();
   // Updated
   parser.on('updated', (itemsData) => {
-    const ts = Date.now();
     log('updating modTs at firebase');
-    itemsModRef.set(ts);
+    itemsModRef.set(Date.now());
   });
   // Changed
   parser.on('changed', ({id, data}) => {
     const ts = Date.now();
     const { lat, lng } = data;
     log.info(`changed, ${id}: ${JSON.stringify(data)}`);
-    // Adding record to mongo
+    // Adding tracking record to mongo
     log(`${id}: adding track record`);
-    const record = { mid: id, ts, lat, lng };
-    mongo.saveAsync(trackings, record).then(() => {
+    const trackingRecord = { mid: id, ts, lat, lng };
+    trackings.save(trackingRecord, {w:1}).then(() => {
       log(`${id}: adding track record done`);
     }).catch((err) => {
       log.err(`${id}: adding track record err - ${err}`);
+    });
+    // Update equipment record
+    log(`${id}: updating equipment record`);
+    equipment.update({_id: id}, data, {upsert: true}).then(() => {
+      log(`${id}: updating equipment record done`);
+    }).catch((err) => {
+      log(`${id}: updating equipment record err - ${err}`);
     });
     // Updating data at firebase
     log(`${id}: updating realtime data`);

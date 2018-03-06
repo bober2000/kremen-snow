@@ -23,18 +23,9 @@ const ensureIndexAsync = (collection, index) => (
   ))
 );
 
-const saveAsync = (collection, data) => (
-  new Promise((resolve, reject) => (
-    collection.save(data, {w:1}, (err, doc) => (
-      err ? reject(err) : resolve(doc)
-    ))
-  ))
-);
-
 // Exports
 
 module.exports = {
   connect,
   ensureIndexAsync,
-  saveAsync,
 };
