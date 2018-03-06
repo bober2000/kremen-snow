@@ -2,10 +2,11 @@ version: '2'
 
 services:
 
-  snow-removing:
-    image: registry.smartapp.com.ua/iq-hub/snow-removing:latest
-    container_name: 'snow-removing'
-    hostname: 'snow-removing'
+  kremen-snow-parser:
+    image: registry.smartapp.com.ua/iq-hub/kremen-snow-parser:latest
+    restart: always
+    container_name: 'kremen-snow-parser'
+    hostname: 'kremen-snow-parser'
     volumes:
       - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
 

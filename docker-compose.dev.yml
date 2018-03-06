@@ -2,13 +2,24 @@ version: '2'
 
 services:
 
-  snow-removing:
+  kremen-snow-api:
     image: node:alpine
-    container_name: 'snow-removing'
-    hostname: 'snow-removing'
+    container_name: 'kremen-snow-api'
+    hostname: 'kremen-snow-api'
     working_dir: /usr/src/app
     volumes:
-      - ./services/snow-removing:/usr/src/app
+      - ./services/kremen-snow-api:/usr/src/app
+    ports:
+      - 22030:8080
+    command: yarn start
+
+  kremen-snow-parser:
+    image: node:alpine
+    container_name: 'kremen-snow-parser'
+    hostname: 'kremen-snow-parser'
+    working_dir: /usr/src/app
+    volumes:
+      - ./services/kremen-snow-parser:/usr/src/app
       - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
     command: yarn start
 

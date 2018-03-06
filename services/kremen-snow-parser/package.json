@@ -3,8 +3,8 @@
   "description": "Snow removing api",
   "license": "MIT",
   "main": "index.js",
-  "name": "snow-removing",
-  "private": false,
+  "name": "kremen-snow-parser",
+  "private": true,
   "scripts": {
     "start": "node index"
   },

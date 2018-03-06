@@ -2,6 +2,6 @@ version: '2'
 
 services:
 
-  snow-removing:
-    image: registry.smartapp.com.ua/iq-hub/snow-removing:latest
-    build: ./services/snow-removing
+  kremen-snow-parser:
+    image: registry.smartapp.com.ua/iq-hub/snow-removing/kremen-snow-parser:latest
+    build: ./services/kremen-snow-parser
