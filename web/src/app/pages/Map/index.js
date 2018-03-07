@@ -1,6 +1,7 @@
 // Utils
 import _ from 'lodash';
 import moment from 'moment';
+import { dayMs, weekMs } from 'utils/dates';
 // React
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -9,9 +10,11 @@ import Map from 'components/Map';
 import MachineMarker from 'components/MachineMarker';
 import StatusPanel from './statusPanel';
 import Brands from 'components/Brands';
+import EquipmentHeatmap from 'components/EquipmentHeatmap';
 // Services
 import { database } from 'services/firebase';
 import configStorage, { CONFIG_KEYS } from 'services/configStorage';
+import { getTruckTrackings } from 'services/api';
 // Consts
 import { coordinates } from 'consts';
 // Style
@@ -52,6 +55,7 @@ class SnowRemovingMap extends Component{
       items: savedItems || [],
       showInfoForItem: null,
       modified: Date.now(),
+      heatmap: null,
     }
   }
 
@@ -65,6 +69,14 @@ class SnowRemovingMap extends Component{
       configStorage.set(CONFIG_KEYS.ITEMS, items);
       this.setState({items});
     });
+    // const end = (new Date()).getTime();
+    // const start = end - dayMs;
+    // getTruckTrackings({start, end}).then((data) => {
+    //   log(`points count: ${data.length}`);
+    //   this.setState({heatmap: data});
+    // }).catch((err) => {
+    //   log.err(err);
+    // })
   }
 
   componentDidMount(){
@@ -127,6 +139,7 @@ class SnowRemovingMap extends Component{
       items,
       showInfoForItem,
       modified,
+      heatmap,
     } = this.state;
     // Render
     return (
@@ -157,6 +170,9 @@ class SnowRemovingMap extends Component{
               onInfoCloseClick={() => this.onMarkerInfoCloseClick(item)}
             />
           ))}
+          { heatmap ? (
+            <EquipmentHeatmap data={heatmap} />
+          ) : null }
         </Map>
         <StatusPanel style={styles.status} />
         <div style={styles.brandsWrap}>

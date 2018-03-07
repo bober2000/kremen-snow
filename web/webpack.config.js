@@ -59,10 +59,14 @@ module.exports = (env) => ({
     ]),
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(package.version),
-      ENV: JSON.stringify(env)
+      ENV: JSON.stringify(env),
+      MAPS_API_KEY: JSON.stringify(process.env.MAPS_API_KEY),
     })
   ],
   devServer: {
-    historyApiFallback: true
+    historyApiFallback: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    }
   }
 });
