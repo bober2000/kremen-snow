@@ -2,6 +2,10 @@ version: '2'
 
 services:
 
+  kremen-snow-api:
+    image: registry.smartapp.com.ua/iq-hub/kremen-snow/kremen-snow-api:latest
+    build: ./services/kremen-snow-api
+
   kremen-snow-parser:
-    image: registry.smartapp.com.ua/iq-hub/snow-removing/kremen-snow-parser:latest
+    image: registry.smartapp.com.ua/iq-hub/kremen-snow/kremen-snow-parser:latest
     build: ./services/kremen-snow-parser

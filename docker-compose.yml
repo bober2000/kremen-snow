@@ -3,12 +3,18 @@ version: '2'
 services:
 
   kremen-snow-parser:
-    image: registry.smartapp.com.ua/iq-hub/kremen-snow-parser:latest
+    image: registry.smartapp.com.ua/iq-hub/kremen-snow/kremen-snow-parser:latest
     restart: always
     container_name: 'kremen-snow-parser'
     hostname: 'kremen-snow-parser'
     volumes:
       - ./serviceAccountKey.json:/usr/src/app/serviceAccountKey.json
+
+  kremen-snow-api:
+    image: registry.smartapp.com.ua/iq-hub/kremen-snow/kremen-snow-api:latest
+    restart: always
+    container_name: 'kremen-snow-api'
+    hostname: 'kremen-snow-api'
 
   mongo:
     image: mongo:latest

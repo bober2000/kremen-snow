@@ -16,7 +16,18 @@ const init = async () => {
   const equipment = db.collection('equipment');
 
   // Creating app
+
   const app = express();
+
+  // CORS
+
+  app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'ALLOWALL');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
   // API
 
@@ -59,7 +70,6 @@ const init = async () => {
     }
   }
   
-
   app.get('/', (req, res) => {
     res.json({name, version});
   });
@@ -77,11 +87,11 @@ const init = async () => {
     if(!query.start) throw {code: 402, name: 'REQ_PARAM_NOT_SET', descr: 'start'};
     const startTs = Number.parseInt(query.start, 10);
     if(Number.isNaN(startTs)) throw {code: 402, name: 'REQ_PARAM_ERR', descr: '"start" is not a number'};
-    // To
+    // End
     if(!query.end) throw {code: 402, name: 'REQ_PARAM_NOT_SET', descr: 'end'};
     const endTs = Number.parseInt(query.end, 10);
     if(Number.isNaN(endTs)) throw {code: 402, name: 'REQ_PARAM_ERR', descr: '"end" is not a number'};
-    
+    // Getting group's equipment
     const groupNames = groupToAltNames(params.group);
     if(!groupNames) throw {code: 402, name: 'UNKNOW_GROUP_NAME', descr: params.group};
     const machines = await equipment.find({group: {'$in': groupNames}}).project({_id: 1}).toArray();
@@ -89,20 +99,19 @@ const init = async () => {
       const descr = `Equipment with "${params.group}" name not found`;
       throw {code: 402, name: 'EQUIPMENT_NOT_FOND', descr};
     }
+    // Converting to ids
     const machinesIds = machines.map((item) => (item._id));
+    // Getting records
     const trackingsQuery = {
       mid: {'$in': machinesIds},
-      ts: {
-        '$gte': startTs,
-        '$lte': endTs,
-      }
+      ts: {'$gte': startTs, '$lte': endTs},
     };
     const records = await trackings.find(trackingsQuery).project({lat: 1, lng: 1, _id: 0}).toArray();
     res.json(records);
   }));
 
   app.all('*', asyncWrap(async (req, res) => {
-    throw {code: 404, name: 'NOT_FOUND', descr: 'api endpoint not found'};
+    throw {code: 404, name: 'NOT_FOUND', descr: `api endpoint not found: ${req.url}`};
   }));
 
   // Starting api

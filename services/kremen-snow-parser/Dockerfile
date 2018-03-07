@@ -20,5 +20,4 @@ COPY index.js /usr/src/app
 COPY lib /usr/src/app/lib
 COPY common /usr/src/app/common
 
-EXPOSE 8080
 CMD yarn start
