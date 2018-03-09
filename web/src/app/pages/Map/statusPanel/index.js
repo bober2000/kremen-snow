@@ -1,12 +1,18 @@
 // Utils
 import moment from 'moment';
+import { minMs } from 'utils/dates';
 // React
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Components
-import Box from 'components/Box';
+import Box from 'components/Bulma/Box';
+import Tabs from 'components/Bulma/Tabs';
+import StatePanel from './statePanel';
+import AnalyticsPanel from './analyticsPanel';
 // Fiebase
 import { database } from 'services/firebase';
+// Styles
+import { mstyle as m } from 'styles';
 // Log
 const log = require('utils/log').default.withModule('statusPanel');
 
@@ -47,7 +53,10 @@ class MapStatusPanel extends Component{
   }
 
   componentWillUnmount(){
-    
+    if(this.modifiedHandler){
+      this.modifiedHandler();
+      this.modifiedHandler = null;
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -64,6 +73,8 @@ class MapStatusPanel extends Component{
     // Props
     const { 
       style,
+      items,
+      onItemClick,
     } = this.props;
     // State
     const {
@@ -71,11 +82,19 @@ class MapStatusPanel extends Component{
     } = this.state;
     // Render
     return (
-      <Box style={style}>
-        <div>
-          <strong>Оновлено: </strong>
-          <span>{ moment(modified).format('HH:mm:ss') }</span>
-        </div>
+      <Box style={m(styles.container, style)}>
+        <Tabs tabs={[
+          { id: 'status', title: 'Статус', content: (
+            <StatePanel 
+              modified={modified}
+              items={items}
+              onItemClick={onItemClick}
+            />
+          )},
+          { id: 'analytics', title: 'Аталітика', content: (
+            <AnalyticsPanel />
+          )}
+        ]}/>
       </Box>
     );
   }
@@ -83,7 +102,18 @@ class MapStatusPanel extends Component{
 
 // Style
 const styles = {
-  
+  container: {
+    backgroundColor: 'rgba(255, 255, 255, .7)',
+  },
+  row: {
+    fontSize: '12px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  activeWrap: {
+    marginTop: 10,
+  }
 }
 
 // Attach prop types

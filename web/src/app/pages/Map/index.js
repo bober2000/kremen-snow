@@ -1,7 +1,7 @@
 // Utils
 import _ from 'lodash';
 import moment from 'moment';
-import { dayMs, weekMs } from 'utils/dates';
+import { dayMs, weekMs, montMs } from 'utils/dates';
 // React
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import EquipmentHeatmap from 'components/EquipmentHeatmap';
 // Services
 import { database } from 'services/firebase';
 import configStorage, { CONFIG_KEYS } from 'services/configStorage';
-import { getTruckTrackings } from 'services/api';
+import { getTruckTrackings, getTracktorsTrackings, getSnowRemoversTrackings } from 'services/api';
 // Consts
 import { coordinates } from 'consts';
 // Style
@@ -42,10 +42,6 @@ const getDefaultCoord = () => (
   configStorage.get(CONFIG_KEYS.MAP_CENTER) || coordinates.kremen
 );
 
-// Firebase
-
-const itemsRef = database.ref('items/data');
-
 // SnowRemovingMap
 class SnowRemovingMap extends Component{
   constructor(props){
@@ -62,7 +58,7 @@ class SnowRemovingMap extends Component{
   // Lifecycle
 
   componentWillMount(){
-    this.itemsHandler = itemsRef.on('value', (snapshot) => {
+    this.itemsHandler = database.ref('items/data').on('value', (snapshot) => {
       log('new items');
       const valObj = snapshot.val();
       const items = _.map(valObj, (data, id) => ({id, ...data}));
@@ -70,13 +66,32 @@ class SnowRemovingMap extends Component{
       this.setState({items});
     });
     // const end = (new Date()).getTime();
-    // const start = end - dayMs;
+    // const start = end - montMs;
+
+    // console.time('truck');
     // getTruckTrackings({start, end}).then((data) => {
-    //   log(`points count: ${data.length}`);
-    //   this.setState({heatmap: data});
+    //   console.timeEnd('truck');
+    //   log(`truck points count: ${data.length}`);
+    //   // this.setState({heatmap: data});
     // }).catch((err) => {
     //   log.err(err);
-    // })
+    // });
+
+    // console.time('tracktros');
+    // getTracktorsTrackings({start, end}).then((data) => {
+    //   console.timeEnd('tracktros');
+    //   log(`tracktros points count: ${data.length}`);
+    // }).catch((err) => {
+    //   log.err(err);
+    // });
+
+    // console.time('snowRemovers');
+    // getSnowRemoversTrackings({start, end}).then((data) => {
+    //   console.timeEnd('snowRemovers');
+    //   log(`snowRemovers points count: ${data.length}`);
+    // }).catch((err) => {
+    //   log.err(err);
+    // });
   }
 
   componentDidMount(){
@@ -84,7 +99,9 @@ class SnowRemovingMap extends Component{
   }
 
   componentWillUnmount(){
-    
+    if(this.itemsHandler){
+      this.itemsHandler();
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -125,6 +142,14 @@ class SnowRemovingMap extends Component{
 
   onMarkerInfoCloseClick = (item) => {
     this.setState({showInfoForItem: null});
+  }
+
+  onStatusPanelItemClick = (e, {id, lat, lng}) => {
+    e.stopPropagation();
+    this.map.panTo(new google.maps.LatLng({lat, lng}));
+    setTimeout(() => {
+      this.setState({showInfoForItem: id});
+    }, 300);
   }
 
   // Render
@@ -174,10 +199,12 @@ class SnowRemovingMap extends Component{
             <EquipmentHeatmap data={heatmap} />
           ) : null }
         </Map>
-        <StatusPanel style={styles.status} />
-        <div style={styles.brandsWrap}>
-          <Brands style={styles.status} />
-        </div>
+        <StatusPanel 
+          style={styles.status} 
+          items={items}
+          onItemClick={this.onStatusPanelItemClick}
+        />
+        <Brands style={styles.brandsWrap} />
       </div>
     );
   }
@@ -199,18 +226,17 @@ const styles = {
     position: 'absolute',
     top: 14,
     left: 14,
-    width: 200,
+    width: 260,
     zIndex: 2,
   },
   brandsWrap: {
     position: 'absolute',
-    bottom: 14,
-    left: 20,
-    right: 20,
+    bottom: 6,
+    left: 40,
+    right: 40,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    zIndex: 2,
   },
 }
 
