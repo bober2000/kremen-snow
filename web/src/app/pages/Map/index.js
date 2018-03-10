@@ -65,14 +65,14 @@ class SnowRemovingMap extends Component{
       configStorage.set(CONFIG_KEYS.ITEMS, items);
       this.setState({items});
     });
-    // const end = (new Date()).getTime();
-    // const start = end - montMs;
+    const end = (new Date()).getTime();
+    const start = end - montMs;
 
     // console.time('truck');
     // getTruckTrackings({start, end}).then((data) => {
     //   console.timeEnd('truck');
     //   log(`truck points count: ${data.length}`);
-    //   // this.setState({heatmap: data});
+    //   this.setState({heatmap: data});
     // }).catch((err) => {
     //   log.err(err);
     // });

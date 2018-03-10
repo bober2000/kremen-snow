@@ -34,6 +34,7 @@ export const CONFIG_KEYS = {
   MAP_CENTER: 'mapCenter',
   MAP_ZOOM: 'mapZoom',
   ITEMS: 'items',
+  STATUS_PANEL_TAB: 'statusPanelTab',
 };
 
 // Export

@@ -7,20 +7,27 @@ import { mstyle as m } from 'styles';
 // Prop types
 const propTypes = {
   style: PropTypes.any,
+  initTab: PropTypes.string,
+  onTabChange: PropTypes.func,
 };
 
 // Default prop types
 const defaultProps = {
   style: null,
+  initTab: null,
+  onTabChange: () => {},
 };
 
 // Tabs
 class Tabs extends Component{
   constructor(props){
     super(props);
+    const initTabId = props.initTab; 
+    const firstTabId = props.tabs && props.tabs.length ? props.tabs[0].id : null;
+    const active = initTabId || firstTabId;
     this.state = {
-      active: props.tabs && props.tabs.length ? props.tabs[0].id : null,
-    }
+      active,
+    };
   }
 
   // Lifecycle
@@ -50,6 +57,7 @@ class Tabs extends Component{
   onTabClick = (e, id) => {
     e.preventDefault();
     this.setState({active: id});
+    this.props.onTabChange(id);
   }
 
   // Render

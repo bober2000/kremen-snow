@@ -9,7 +9,6 @@ import MapPage from './pages/Map';
 // Styles
 import './app.scss';
 import '../../node_modules/font-awesome/css/font-awesome.css';
-import '../../node_modules/react-toggle/style.css';
 import '../../node_modules/react-datepicker/dist/react-datepicker.css';
 import { mixings } from 'styles';
 // Log

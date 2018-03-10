@@ -9,6 +9,8 @@ import Box from 'components/Bulma/Box';
 import Tabs from 'components/Bulma/Tabs';
 import StatePanel from './statePanel';
 import AnalyticsPanel from './analyticsPanel';
+// Services
+import configStorage, { CONFIG_KEYS } from 'services/configStorage';
 // Fiebase
 import { database } from 'services/firebase';
 // Styles
@@ -30,8 +32,10 @@ const defaultProps = {
 class MapStatusPanel extends Component{
   constructor(props){
     super(props);
+    const initTab = configStorage.get(CONFIG_KEYS.STATUS_PANEL_TAB) || null; 
     this.state = {
       modified: Date.now(),
+      initTab,
     }
   }
 
@@ -67,6 +71,13 @@ class MapStatusPanel extends Component{
     console.error(err);
   }
 
+  // Events
+
+  onTabChange = (tabId) => {
+    log(`tab changed - ${tabId}`);
+    configStorage.set(CONFIG_KEYS.STATUS_PANEL_TAB, tabId);
+  }
+
   // Render
 
   render(){
@@ -79,22 +90,27 @@ class MapStatusPanel extends Component{
     // State
     const {
       modified,
+      initTab,
     } = this.state;
     // Render
     return (
       <Box style={m(styles.container, style)}>
-        <Tabs tabs={[
-          { id: 'status', title: 'Статус', content: (
-            <StatePanel 
-              modified={modified}
-              items={items}
-              onItemClick={onItemClick}
-            />
-          )},
-          { id: 'analytics', title: 'Аталітика', content: (
-            <AnalyticsPanel />
-          )}
-        ]}/>
+        <Tabs 
+          initTab={initTab}
+          tabs={[
+            { id: 'status', title: 'Статус', content: (
+              <StatePanel 
+                modified={modified}
+                items={items}
+                onItemClick={onItemClick}
+              />
+            )},
+            { id: 'analytics', title: 'Аталітика', content: (
+              <AnalyticsPanel />
+            )}
+          ]}
+          onTabChange={this.onTabChange}
+        />
       </Box>
     );
   }

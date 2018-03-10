@@ -29,8 +29,7 @@
     "react-datepicker": "^1.2.2",
     "react-dom": "^16.2.0",
     "react-google-maps": "^9.4.5",
-    "react-tap-event-plugin": "^3.0.2",
-    "react-toggle": "^4.0.2"
+    "react-tap-event-plugin": "^3.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
