@@ -7,7 +7,7 @@ const { name, version, description } = require('./package.json');
 const secMs = 1000;
 const minMs = secMs * 60;
 const hourMs = minMs * 60;
-const mongoDbName = 'snowRemoving';
+const mongodbName = process.env.MONGODB_NAME || 'snowRemoving';
 // Log
 const log = require('./lib/log').withModule('app');
 // Info
@@ -21,13 +21,12 @@ firebase.initializeApp({
   credential: firebase.credential.cert(fireServiceAccount),
   databaseURL: "https://kremen-snow.firebaseio.com"
 });
-const realdb = firebase.database();
-const itemsModRef = realdb.ref('items/modified');
+const firedb = firebase.database();
 
 const startProcessing = async () => {
-  log('connecting to mongo');
-  const { db } = await mongo.connect(mongoDbName);
-  log('connecting to mongo done');
+  log(`connecting to mongodb with name "${mongodbName}"`);
+  const { db } = await mongo.connect(mongodbName);
+  log('connecting to mongodb done');
   const trackings = db.collection('trackings');
   const equipment = db.collection('equipment');
   log('ensuring indexes');
@@ -39,7 +38,9 @@ const startProcessing = async () => {
   // Updated
   parser.on('updated', (itemsData) => {
     log('updating modTs at firebase');
-    itemsModRef.set(Date.now());
+    firedb.ref('items/modified').set(Date.now()).catch((err) => {
+      log(`updating modTs at firebase err - ${err}`);
+    });
   });
   // Changed
   parser.on('changed', ({id, data}) => {
@@ -63,17 +64,28 @@ const startProcessing = async () => {
     });
     // Updating data at firebase
     log(`${id}: updating realtime data`);
-    realdb.ref(`items/data/${id}`).set(data).then(() => {
+    firedb.ref(`items/data/${id}`).set(data).then(() => {
       log(`${id}: updating realtime data done`);
     }).catch((err) => {
       log(`${id}: updating realtime data err - ${err}`);
     });
   });
   // Start
-  parser.start();
+  parser.start().catch((err) => {
+    log.err(`start err - ${err}`);
+    throw err;
+  });
 }
 
+// Catch unhandled rejecctions
+process.on('unhandledRejection', (err) => {
+  log.err(`unhandled rejection`);
+  log.err(err);
+  process.exit(1);
+});
+
+// Start processing
 startProcessing().catch((err) => {
-  log(`error: ${err}`);
+  log.err(`error: ${err}`);
   process.exit(1);
 });

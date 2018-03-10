@@ -178,20 +178,25 @@ class SnowRemovingParser{
       clearTimeout(this.monitHandler);
     }
     this.monitHandler = setTimeout(async () => {
-      log(`making tick req with sender: ${name}`);
-      const tickBody = await this.makeTickReq(name);
-      log(`making tick req done`);
-      if(tickBody){
-        this.processTickBody(tickBody);
-      }else{
-        log.err('tick body empty');
-      }
-      const tickAddTimer = getAddTimerFromBody(tickBody);
-      if(tickAddTimer && (tickAddTimer.name !== name)){
-        log(`new timer found: ${tickAddTimer.name}`);
-        this.startMonitoringWithTimer(tickAddTimer);
-      }else{
-        log('new timer not found');
+      try{
+        log(`making tick req with sender: ${name}`);
+        const tickBody = await this.makeTickReq(name);
+        log(`making tick req done`);
+        if(tickBody){
+          this.processTickBody(tickBody);
+        }else{
+          log.err('tick body empty');
+        }
+        const tickAddTimer = getAddTimerFromBody(tickBody);
+        if(tickAddTimer && (tickAddTimer.name !== name)){
+          log(`new timer found: ${tickAddTimer.name}`);
+          this.startMonitoringWithTimer(tickAddTimer);
+        }else{
+          log('new timer not found');
+          this.startMonitoringWithTimer({name, val});
+        }
+      }catch(err){
+        log(`monitoring err - ${err}`);
         this.startMonitoringWithTimer({name, val});
       }
     }, val);
