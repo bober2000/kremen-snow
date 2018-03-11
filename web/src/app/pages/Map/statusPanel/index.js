@@ -85,7 +85,9 @@ class MapStatusPanel extends Component{
     const { 
       style,
       items,
+      trackingAnalytics,
       onItemClick,
+      onTrackingAnalyticsChange,
     } = this.props;
     // State
     const {
@@ -106,7 +108,10 @@ class MapStatusPanel extends Component{
               />
             )},
             { id: 'analytics', title: 'Аталітика', content: (
-              <AnalyticsPanel />
+              <AnalyticsPanel 
+                data={trackingAnalytics}
+                onChange={onTrackingAnalyticsChange}
+              />
             )}
           ]}
           onTabChange={this.onTabChange}

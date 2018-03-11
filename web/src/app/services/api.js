@@ -43,6 +43,13 @@ export const getTrackings = async ({start, end, group}) => {
   return apiReq({path: `/trackings/${group}`, qs});
 }
 
+export const getTrackingsForGroups = async ({start, end, groups}) => {
+  if(!groups || !groups.length) return [];
+  return Promise.all(groups.map((group) => (
+    getTrackings({start, end, group})
+  ))); 
+}
+
 export const getTruckTrackings = async ({start, end}) => {
   return getTrackings({start, end, group: 'trucks'})
 }

@@ -53,6 +53,7 @@ function DatePicker(rawProps){
   // Render
   return (
     <ReactDatePicker 
+      dateFormat="DD.MM.YYYY"
       {...props} 
       customInput={<CustomInput style={inputStyle} />}
     />

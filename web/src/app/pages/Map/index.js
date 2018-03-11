@@ -1,7 +1,7 @@
 // Utils
 import _ from 'lodash';
 import moment from 'moment';
-import { dayMs, weekMs, montMs } from 'utils/dates';
+import { dayMs, weekMs, monthMs } from 'utils/dates';
 // React
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -10,11 +10,11 @@ import Map from 'components/Map';
 import MachineMarker from 'components/MachineMarker';
 import StatusPanel from './statusPanel';
 import Brands from 'components/Brands';
-import EquipmentHeatmap from 'components/EquipmentHeatmap';
+import EquipmentTrackingMap from 'components/EquipmentTrackingMap';
 // Services
 import { database } from 'services/firebase';
 import configStorage, { CONFIG_KEYS } from 'services/configStorage';
-import { getTruckTrackings, getTracktorsTrackings, getSnowRemoversTrackings } from 'services/api';
+import { getTrackingsForGroups } from 'services/api';
 // Consts
 import { coordinates } from 'consts';
 // Style
@@ -47,17 +47,20 @@ class SnowRemovingMap extends Component{
   constructor(props){
     super(props);
     const savedItems = configStorage.get(CONFIG_KEYS.ITEMS);
+    const savedTrackingAnalytics = configStorage.get(CONFIG_KEYS.TRACKING_ANALYTICS);
     this.state = {
       items: savedItems || [],
       showInfoForItem: null,
       modified: Date.now(),
-      heatmap: null,
+      trackingPoints: null,
+      trackingAnalytics: savedTrackingAnalytics || null,
     }
   }
 
   // Lifecycle
 
   componentWillMount(){
+    // Init getting items
     this.itemsHandler = database.ref('items/data').on('value', (snapshot) => {
       log('new items');
       const valObj = snapshot.val();
@@ -65,33 +68,8 @@ class SnowRemovingMap extends Component{
       configStorage.set(CONFIG_KEYS.ITEMS, items);
       this.setState({items});
     });
-    const end = (new Date()).getTime();
-    const start = end - montMs;
-
-    // console.time('truck');
-    // getTruckTrackings({start, end}).then((data) => {
-    //   console.timeEnd('truck');
-    //   log(`truck points count: ${data.length}`);
-    //   this.setState({heatmap: data});
-    // }).catch((err) => {
-    //   log.err(err);
-    // });
-
-    // console.time('tracktros');
-    // getTracktorsTrackings({start, end}).then((data) => {
-    //   console.timeEnd('tracktros');
-    //   log(`tracktros points count: ${data.length}`);
-    // }).catch((err) => {
-    //   log.err(err);
-    // });
-
-    // console.time('snowRemovers');
-    // getSnowRemoversTrackings({start, end}).then((data) => {
-    //   console.timeEnd('snowRemovers');
-    //   log(`snowRemovers points count: ${data.length}`);
-    // }).catch((err) => {
-    //   log.err(err);
-    // });
+    // Init analytics
+    this.showTrackingAnalytics(this.state.trackingAnalytics);    
   }
 
   componentDidMount(){
@@ -110,6 +88,36 @@ class SnowRemovingMap extends Component{
 
   componentDidCatch(err){
     log.err(err);
+  }
+
+  // Functionality
+
+  showTrackingAnalytics(conf){
+    log(`show tracking analytics with conf: ${JSON.stringify(conf)}`);
+    this.setState({trackingPoints: null});
+    if(!conf || !conf.groups || !conf.groups.length){
+      return;
+    }
+    const { period, groups } = conf;
+    // Getting start and end
+    let start = conf.start;
+    let end = conf.end;
+    if(period === 'day'){
+      const nowTs = Date.now();
+      start = nowTs - dayMs;
+      end = nowTs;
+    }else if(period === 'week'){
+      const nowTs = Date.now();
+      start = nowTs - weekMs;
+      end = nowTs;
+    }
+    // Getting point
+    getTrackingsForGroups({start, end, groups}).then((data) => {
+      const trackingPoints = _.flatten(data);
+      this.setState({trackingPoints});
+    }).catch((err) => {
+      log.err(err);
+    });
   }
 
   // Events
@@ -152,6 +160,12 @@ class SnowRemovingMap extends Component{
     }, 300);
   }
 
+  onTrackingAnalyticsChange = (trackingAnalytics) => {
+    configStorage.set(CONFIG_KEYS.TRACKING_ANALYTICS, trackingAnalytics);
+    this.setState({trackingAnalytics});
+    this.showTrackingAnalytics(trackingAnalytics);
+  }
+
   // Render
 
   render(){
@@ -164,7 +178,8 @@ class SnowRemovingMap extends Component{
       items,
       showInfoForItem,
       modified,
-      heatmap,
+      trackingPoints,
+      trackingAnalytics,
     } = this.state;
     // Render
     return (
@@ -195,14 +210,16 @@ class SnowRemovingMap extends Component{
               onInfoCloseClick={() => this.onMarkerInfoCloseClick(item)}
             />
           ))}
-          { heatmap ? (
-            <EquipmentHeatmap data={heatmap} />
+          { trackingPoints ? (
+            <EquipmentTrackingMap data={trackingPoints} />
           ) : null }
         </Map>
         <StatusPanel 
           style={styles.status} 
           items={items}
+          trackingAnalytics={trackingAnalytics}
           onItemClick={this.onStatusPanelItemClick}
+          onTrackingAnalyticsChange={this.onTrackingAnalyticsChange}
         />
         <Brands style={styles.brandsWrap} />
       </div>

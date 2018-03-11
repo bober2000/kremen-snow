@@ -1,25 +1,24 @@
 // React
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+// Components
+import Radio from '../Radio';
 
 // Prop types
 const propTypes = {
   style: PropTypes.any,
   name: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  checked: PropTypes.bool,
-  onChange: PropTypes.func,
+  items: PropTypes.array,
 };
 
 // Default prop types
 const defaultProps = {
   style: null,
-  checked: false,
-  onChange: () => {},
+  items: [],
 };
 
-// Radio
-class Radio extends Component{
+// RadioGroup
+class RadioGroup extends Component{
   constructor(props){
     super(props);
     this.state = {}
@@ -47,30 +46,37 @@ class Radio extends Component{
     console.error(err);
   }
 
+  // Events
+
+  onRadioChange = (e) => {
+    const value = e.target.value;
+    this.props.onChange(value);
+  }
+
   // Render
 
   render(){
     // Props
     const { 
       style,
-      title,
       name,
-      value,
-      checked,
-      onChange,
+      items,
     } = this.props;
+    const groupValue = this.props.value;
     // Render
     return (
-      <label className="radio" style={style}>
-        <input 
-          type="radio" 
-          name={name} 
-          value={value} 
-          checked={checked}
-          onChange={onChange}
-        />
-        {` ${title}`}
-      </label>
+      <div style={style}> 
+        {items.map(({title, value}, index) => (
+          <Radio 
+            key={index} 
+            name={name}
+            title={title}
+            value={value}
+            checked={groupValue === value}
+            onChange={this.onRadioChange}
+          />
+        ))}
+      </div>
     );
   }
 }
@@ -81,7 +87,7 @@ const styles = {
 }
 
 // Attach prop types
-Radio.propTypes = propTypes;
-Radio.defaultProps = defaultProps;
+RadioGroup.propTypes = propTypes;
+RadioGroup.defaultProps = defaultProps;
 
-export default Radio;
+export default RadioGroup;

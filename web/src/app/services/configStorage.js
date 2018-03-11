@@ -35,6 +35,7 @@ export const CONFIG_KEYS = {
   MAP_ZOOM: 'mapZoom',
   ITEMS: 'items',
   STATUS_PANEL_TAB: 'statusPanelTab',
+  TRACKING_ANALYTICS: 'trackingAnalytics',
 };
 
 // Export
