@@ -11,6 +11,7 @@ import MachineMarker from 'components/MachineMarker';
 import StatusPanel from './statusPanel';
 import Brands from 'components/Brands';
 import EquipmentTrackingMap from 'components/EquipmentTrackingMap';
+import AboutModal from './aboutModal';
 // Services
 import { database } from 'services/firebase';
 import configStorage, { CONFIG_KEYS } from 'services/configStorage';
@@ -173,6 +174,15 @@ class SnowRemovingMap extends Component{
     this.showTrackingAnalytics(trackingAnalytics);
   }
 
+  onAboutClick = (e) => {
+    log('about click');
+    this.setState({showAbout: true});
+  }
+
+  onAboutReqClose = () => {
+    this.setState({showAbout: false});
+  }
+
   // Render
 
   render(){
@@ -185,6 +195,7 @@ class SnowRemovingMap extends Component{
       items,
       showInfoForItem,
       modified,
+      showAbout,
       trackingPoints,
       trackingAnalytics,
       trackingAnalyticsProcessing,
@@ -229,8 +240,13 @@ class SnowRemovingMap extends Component{
           trackingAnalyticsProcessing={trackingAnalyticsProcessing}
           onItemClick={this.onStatusPanelItemClick}
           onTrackingAnalyticsChange={this.onTrackingAnalyticsChange}
+          onAboutClick={this.onAboutClick}
         />
         <Brands style={styles.brandsWrap} />
+        <AboutModal 
+          visible={showAbout}
+          onRequestClose={this.onAboutReqClose}
+        />
       </div>
     );
   }

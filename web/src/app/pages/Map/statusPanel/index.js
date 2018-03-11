@@ -89,6 +89,7 @@ class MapStatusPanel extends Component{
       trackingAnalyticsProcessing,
       onItemClick,
       onTrackingAnalyticsChange,
+      onAboutClick,
     } = this.props;
     // State
     const {
@@ -119,6 +120,9 @@ class MapStatusPanel extends Component{
           ]}
           onTabChange={this.onTabChange}
         />
+        <div style={styles.aboutWrap}>
+          <a onClick={onAboutClick}>Про проект</a>
+        </div>
       </Box>
     );
   }
@@ -137,7 +141,14 @@ const styles = {
   },
   activeWrap: {
     marginTop: 10,
-  }
+  },
+  aboutWrap: {
+    marginTop: 10,
+    textAlign: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    textDecoration: 'underline',
+  },
 }
 
 // Attach prop types
