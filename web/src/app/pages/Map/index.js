@@ -54,6 +54,7 @@ class SnowRemovingMap extends Component{
       modified: Date.now(),
       trackingPoints: null,
       trackingAnalytics: savedTrackingAnalytics || null,
+      trackingAnalyticsProcessing: false,
     }
   }
 
@@ -94,7 +95,8 @@ class SnowRemovingMap extends Component{
 
   showTrackingAnalytics(conf){
     log(`show tracking analytics with conf: ${JSON.stringify(conf)}`);
-    this.setState({trackingPoints: null});
+    this.setState({trackingPoints: null, trackingAnalyticsProcessing: false});
+    this.lastTrackingAnalyticsConf = {...conf};
     if(!conf || !conf.groups || !conf.groups.length){
       return;
     }
@@ -112,11 +114,16 @@ class SnowRemovingMap extends Component{
       end = nowTs;
     }
     // Getting point
+    this.setState({trackingAnalyticsProcessing: true});
     getTrackingsForGroups({start, end, groups}).then((data) => {
-      const trackingPoints = _.flatten(data);
-      this.setState({trackingPoints});
+      if(JSON.stringify(conf) === JSON.stringify(this.lastTrackingAnalyticsConf)){
+        this.setState({trackingAnalyticsProcessing: false});
+        const trackingPoints = _.flatten(data);
+        this.setState({trackingPoints});
+      }
     }).catch((err) => {
       log.err(err);
+      this.setState({trackingAnalyticsProcessing: false});
     });
   }
 
@@ -180,6 +187,7 @@ class SnowRemovingMap extends Component{
       modified,
       trackingPoints,
       trackingAnalytics,
+      trackingAnalyticsProcessing,
     } = this.state;
     // Render
     return (
@@ -218,6 +226,7 @@ class SnowRemovingMap extends Component{
           style={styles.status} 
           items={items}
           trackingAnalytics={trackingAnalytics}
+          trackingAnalyticsProcessing={trackingAnalyticsProcessing}
           onItemClick={this.onStatusPanelItemClick}
           onTrackingAnalyticsChange={this.onTrackingAnalyticsChange}
         />

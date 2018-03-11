@@ -3,6 +3,20 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Components
 import HeatmapLayer from "react-google-maps/lib/components/visualization/HeatmapLayer";
+// Styles
+const rainbowGradient = [
+  'rgba(102,255,0,0)', 
+  'rgba(147,255,0,1)', 
+  'rgba(193,255,0,1)', 
+  'rgba(238,255,0,1)', 
+  'rgba(244,227,0,1)', 
+  'rgba(244,227,0,1)', 
+  'rgba(249,198,0,1)', 
+  'rgba(255,170,0,1)', 
+  'rgba(255,113,0,1)', 
+  'rgba(255,57,0,1)', 
+  'rgba(255,0,0,1)',
+];
 
 // Prop types
 const propTypes = {
@@ -64,19 +78,7 @@ class EquipmentHeatmap extends Component{
           radius: 16,
           opacity: 1,
           dissipating: true,
-          gradient: [
-            'rgba(102,255,0,0)', 
-            'rgba(147,255,0,1)', 
-            'rgba(193,255,0,1)', 
-            'rgba(238,255,0,1)', 
-            'rgba(244,227,0,1)', 
-            'rgba(244,227,0,1)', 
-            'rgba(249,198,0,1)', 
-            'rgba(255,170,0,1)', 
-            'rgba(255,113,0,1)', 
-            'rgba(255,57,0,1)', 
-            'rgba(255,0,0,1)'
-          ],
+          gradient: rainbowGradient,
         }}
       />
     );

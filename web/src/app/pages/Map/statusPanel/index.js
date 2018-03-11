@@ -14,7 +14,7 @@ import configStorage, { CONFIG_KEYS } from 'services/configStorage';
 // Fiebase
 import { database } from 'services/firebase';
 // Styles
-import { mstyle as m } from 'styles';
+import { mstyle as m, colors } from 'styles';
 // Log
 const log = require('utils/log').default.withModule('statusPanel');
 
@@ -86,6 +86,7 @@ class MapStatusPanel extends Component{
       style,
       items,
       trackingAnalytics,
+      trackingAnalyticsProcessing,
       onItemClick,
       onTrackingAnalyticsChange,
     } = this.props;
@@ -98,6 +99,7 @@ class MapStatusPanel extends Component{
     return (
       <Box style={m(styles.container, style)}>
         <Tabs 
+          color={colors.mainColor}
           initTab={initTab}
           tabs={[
             { id: 'status', title: 'Статус', content: (
@@ -110,6 +112,7 @@ class MapStatusPanel extends Component{
             { id: 'analytics', title: 'Аталітика', content: (
               <AnalyticsPanel 
                 data={trackingAnalytics}
+                processing={trackingAnalyticsProcessing}
                 onChange={onTrackingAnalyticsChange}
               />
             )}

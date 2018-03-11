@@ -1,8 +1,8 @@
-export default {
+const colors = {
   orange: '#ff9800',
   red: '#F44336',
   green: '#4CAF50',
-  blue: '#007FFF',
+  blue: '#3273dc',
   violet: '#c018c0',
   pink: '#E91E63',
   purple: '#9C27B0',
@@ -12,9 +12,13 @@ export default {
   lime: '#CDDC39',
   yellow: '#F5D456',
   white: '#fff',
+}
 
-  facebook: '#3b5998',
-  google: '#ea4335',
-  slack: '#3eb991',
-  github: '#333',
+const named = {
+  mainColor: colors.blue,
+};
+
+export default {
+  ...colors,
+  ...named,
 };

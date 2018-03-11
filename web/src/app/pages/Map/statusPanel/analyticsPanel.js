@@ -140,7 +140,7 @@ class AnalyticsPanel extends Component{
 
   renderMainPanel(){
     // Props
-    const { data } = this.props;
+    const { data, processing } = this.props;
     // Data
     const {
       groups = [],
@@ -189,6 +189,7 @@ class AnalyticsPanel extends Component{
         />
         { period === 'custom' ? this.renderCustomPerios() : null }
         { this.renderPeriodLabel() }
+        { processing ? this.renderLoading() : null }
       </div>
     );
   }
@@ -249,6 +250,15 @@ class AnalyticsPanel extends Component{
     }
   }
 
+  renderLoading(){
+    return (
+      <div style={m(styles.row, styles.loading)}>
+        <span className="fa fa-spin fa-refresh" />
+        <span style={styles.loadingText}>{`Завантаження...`}</span>
+      </div>
+    );
+  }
+
 }
 
 // Style
@@ -292,6 +302,14 @@ const styles = {
     justifyContent: 'center',
     fontWeight: 'bold',
     fontSize: '10px',
+  },
+  loading: {
+    justifyContent: 'center',
+    fontWeight: 'bold',
+  },
+  loadingText: {
+    display: 'inline-block',
+    marginLeft: '6px',
   },
 }
 

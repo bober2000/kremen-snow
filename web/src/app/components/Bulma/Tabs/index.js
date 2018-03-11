@@ -67,11 +67,14 @@ class Tabs extends Component{
     const { 
       style,
       tabs,
+      color = '#3273dc',
     } = this.props;
     // State
     const {
       active,
     } = this.state;
+    // Styles
+    const styles = getStyles({mainColor: color});
     // Render
     return (
       <div style={m(styles.container, style)}>
@@ -86,7 +89,7 @@ class Tabs extends Component{
                 className={id === active ? 'is-active' : null}
               >
                 <a 
-                  style={styles.tab}
+                  style={m(styles.tab, (id === active ) ? styles.tabActive : null)}
                   onClick={(e) => this.onTabClick(e, id)}
                 >
                   {title}
@@ -108,7 +111,7 @@ class Tabs extends Component{
 }
 
 // Style
-const styles = {
+const getStyles = ({mainColor}) => ({
   container: {
 
   },
@@ -119,11 +122,15 @@ const styles = {
     padding: '0.2em 0.7em',
     fontSize: '14px',
     fontWeight: 'bold',
+    color: mainColor,
+  },
+  tabActive: {
+    borderBottomColor: mainColor,
   },
   content: {
     
   },
-}
+});
 
 // Attach prop types
 Tabs.propTypes = propTypes;
