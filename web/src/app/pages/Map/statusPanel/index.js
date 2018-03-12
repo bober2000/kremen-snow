@@ -110,7 +110,7 @@ class MapStatusPanel extends Component{
                 onItemClick={onItemClick}
               />
             )},
-            { id: 'analytics', title: 'Аталітика', content: (
+            { id: 'analytics', title: 'Аналітика', content: (
               <AnalyticsPanel 
                 data={trackingAnalytics}
                 processing={trackingAnalyticsProcessing}
